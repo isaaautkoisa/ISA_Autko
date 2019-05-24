@@ -54,7 +54,7 @@ void setup(void)
 
 	Wire.begin();
 	qmc.init();
-
+qmc.reset();
 	kierunek = readCompass();
 }
 
@@ -62,9 +62,17 @@ void loop(void)
 {
 
   
+	if(!isObstacleCloseBySide(UltraSoundSensor::Front,15))
+	{
+		driveForward(150);
+	}
+	if(isObstacleCloseBySide(UltraSoundSensor::Front,15))
+	{
+		setCarParrarelToObstacle(UltraSoundSensor::Front,150,30);
+	}
+	breakCar();
 
-
-	setDirection(kierunek, 125, 20);//150,30
+	//setDirection(kierunek, 150, 20);//150,30
 }
 
 int measureSoundSpeed(int trigger_pin, int echo_pin)
@@ -130,7 +138,7 @@ void turnLeft(int level)
 	analogWrite(LEFT_PWM, -level);
 	digitalWrite(RIGHT_IN1, true);
 	digitalWrite(RIGHT_IN2, false);
-	analogWrite(RIGHT_PWM, level);
+	analogWrite(RIGHT_PWM, level+50);
 }
 void turnRight(int level)
 {
@@ -139,7 +147,7 @@ void turnRight(int level)
 	Serial.println(level);
 	digitalWrite(LEFT_IN1, false);
 	digitalWrite(LEFT_IN2, true);
-	analogWrite(LEFT_PWM, level);
+	analogWrite(LEFT_PWM, level+50);
 	digitalWrite(RIGHT_IN1, false);
 	digitalWrite(RIGHT_IN2, true);
 	analogWrite(RIGHT_PWM, -level);
@@ -240,21 +248,23 @@ void setCarParrarelToObstacle(UltraSoundSensor sensor, int rotationSpeed, int ro
 		turnRight(rotationSpeed);
 		delay(rotationTime);
 		breakCar();
-	} while (lastDistance > readProximityBySide(sensor) || readProximityBySide(sensor) != 0);//== czy =
-///////////PO KIJ TO
-	do
-	{
-		lastDistance = readProximityBySide(sensor);
-		turnLeft(rotationSpeed);
-		delay(rotationTime);
-		breakCar();
-	} while (lastDistance > readProximityBySide(sensor) || readProximityBySide(sensor) == 0);
+	} while (lastDistance <= 60);//== czy =
+
+	//do
+	//{
+	//	lastDistance = readProximityBySide(sensor);
+	//	turnLeft(rotationSpeed);
+	//	delay(rotationTime);
+	//	breakCar();
+	//} while (lastDistance > readProximityBySide(sensor));
+
+	
 }
 
 void ommitObstacleBySide(UltraSoundSensor sensor, int testSpeed)
 {
 	int lastDistance;
-	if (!isObstacleCloseBySide(UltraSoundSensor::Front, 20)) driveForward(testSpeed);
+	//if (!isObstacleCloseBySide(UltraSoundSensor::Front, 15)) driveForward(testSpeed);
 	do
 	{
 		lastDistance = readProximityBySide(sensor);
