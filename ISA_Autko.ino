@@ -60,16 +60,11 @@ void setup(void)
 
 void loop(void)
 {
-	//while(isObstacleClose(UltraSoundSensor::Front,25))
-	{
-		//	driveForward(100);
-	}
-	// breakCar();
-	delay(1000);
+
+  
 
 
-
-	setDirection(kierunek, 150, 30);
+	setDirection(kierunek, 125, 20);//150,30
 }
 
 int measureSoundSpeed(int trigger_pin, int echo_pin)
